@@ -41,8 +41,31 @@ var UserSchema = new mongoose.Schema({
 
 var User = mongoose.model('User', UserSchema);
 
-passport.use(new LocalStrategy(
-function (username, password, done) {
+var RideSchema = new mongoose.Schema({
+    name: String,
+    description: String,
+    rideId: String,
+    saved: Number,
+    start: String,
+    end: String,
+    creator: String,
+    map: Object,
+    dateCreated: Date
+});
+
+var Ride = mongoose.model('Ride', RideSchema);
+
+var ReviewSchema = new mongoose.Schema({
+    content: String,
+    username: String,
+    rideName: String,
+    rideId: String,
+    dateCreated: Date
+});
+
+var Review = mongoose.model('Review', ReviewSchema);
+
+passport.use(new LocalStrategy(function (username, password, done) {
     User.findOne({username: username, password: password}, function (err,docs) {
         if (err) {
             return done(null, false, {errorMessage: 'Username or password is invalid'});
@@ -77,53 +100,51 @@ app.get('/user/:username', function (req, res) {
     var username = req.params.username;
     User.findOne({username: username}, function (err,docs) {
         if (err) {
-            res.status(401).send('User ' + username + ' was not found');
+            res.status(401).send('User ' + username + ' was invalid');
         } else {
             res.json(docs);
         }
     });
 });
 
+// check if user logged in
 app.get('/loggedin', function( req, res) {
     res.send(req.isAuthenticated() ? req.user : null);
 });
 
+// log user in
 app.post('/login', passport.authenticate('local'), function (req, res) {
     res.send(req.user);
 });
 
+// log user out
 app.post('/logout', function (req, res) {
     req.logOut();
     res.send(200);
 }); 
 
+// register new user
 app.post('/register', function(req, res){
     var newuser = req.body;
     User.findOne({username: newuser.username}, function (err,docs) {
-        // first check to see if user already has that username (in which case docs would be non-null)
         if (err || docs) {
-            // if so, return error and error message saying to pick new username
             res.status(401).send('Username ' + newuser.username + ' already taken. Choose a new username.');
         } else {
-            // otherwise insert and log in new user
-            insertNewUser(req, res, newuser);
+            newuser.following = [];
+            mongoose.connectionn.collection('users').insert(newuser, function (err) {
+                if (err) {
+                    res.status(401).send('Error registering user');
+                } else {
+                    passport.authenticate('local')(req, res, function () {
+                        res.send(req.user);
+                    });
+                }
+            });
         }
     });
 });
 
-function insertNewUser(req, res, newuser)  {
-    newuser.following = [];
-    mongoose.connectionn.collection('users').insert(newuser, function (err) {
-        if (err) {
-            res.status(401).send('Error in registration');
-        } else {
-            passport.authenticate('local')(req, res, function () {
-                res.send(req.user);
-            });
-        }
-    });
-}
-
+// favorites ride for user and increments saved count for ride
 app.put('/saveRide', function (req, res){
     var rideToSave = req.body.rideId;
     User.findOne({username: req.user.username}, function (err, doc) {
@@ -142,6 +163,7 @@ app.put('/saveRide', function (req, res){
     });
 });
 
+// unfavorites ride for user and decrements aved count for ride
 app.put('/removeRide', function (req, res){
     var rideToRemove= req.body.rideId;
     User.findOne({username: req.user.username}, function (err, doc) {
@@ -162,13 +184,13 @@ app.put('/removeRide', function (req, res){
     });
 });
 
-// follow a user
-// put userToFollow in this user's "Following" array
+// adds given user to follow list of logged in user
 app.put('/follow', function (req, res) {
     var userToFollow = req.body.username;
     User.findOne({username: req.user.username}, function (err, doc){
         var following = doc.following;
         following.push(userToFollow);
+
         User.update({username: req.user.username}, {'following': following}, function () {
             req.user.following = following;
             res.send(req.user);
@@ -176,14 +198,15 @@ app.put('/follow', function (req, res) {
     });
 });
 
-// unfollow a user
-// remove userToUnfollow from this user's "Following" array
+// removes given user from follow list of logged in user
 app.put('/unfollow', function (req, res) {
     var userToUnfollow = req.body.username;
+
     User.findOne({username: req.user.username}, function (err, doc){
         var following = doc.following;
         var index = following.indexOf(userToUnfollow);
         following.splice(index, 1);
+
         User.update({username: req.user.username}, {'following': following}, function () {
             req.user.following = following;
             res.send(req.user);
@@ -191,25 +214,13 @@ app.put('/unfollow', function (req, res) {
     });
 });
 
-var RideSchema = new mongoose.Schema({
-    name: String,
-    description: String,
-    rideId: String,
-    saved: Number,
-    start: String,
-    end: String,
-    creator: String,
-    map: Object,
-    dateCreated: Date
-});
-
-var Ride = mongoose.model('Ride', RideSchema);
-
+// creates a new ride
 app.post('/ride', function(req, res){
     var ride = req.body;
     ride.dateCreated = new Date();
     ride.saved = 0;
     ride.rideId = mongoose.Types.ObjectId().toString();
+
     mongoose.connectionn.collection('rides').insert(ride, function(err, docs){
         if(err) {
             res.status(401).send('Error saving ride');
@@ -219,12 +230,14 @@ app.post('/ride', function(req, res){
     });
 });
 
+// gets all rides
 app.get('/rides', function(req, res) {
     Ride.find(function(err, docs) {
         res.json(docs);
     });
 });
 
+// get ride by id
 app.get('/rides/:rideId', function(req, res){
     var rideId = req.params.rideId;
     Ride.findOne({rideId: rideId}, function(err, doc) {
@@ -232,6 +245,7 @@ app.get('/rides/:rideId', function(req, res){
     });
 });
 
+// get rides by proximity to given location
 app.get('/ridesByLocation', function(req, res) {
     var lat = req.query.lat,
         lng = req.query.lng,
@@ -255,6 +269,7 @@ app.get('/ridesByLocation', function(req, res) {
     });
 });
 
+// get rides if they are followed by logged in user
 app.get('/ridesByFollower', function(req ,res){
     User.findOne({username: req.user.username}, function(err, doc) {
         var following = doc.following,
@@ -308,23 +323,13 @@ function deg2rad(deg) {
   return deg * (Math.PI/180);
 }
 
+// get rides created by given user
 app.get('/ridesByUser/:username', function(req, res) {
     var username = req.params.username;
     Ride.find({creator: username}, function(err, docs) {
         res.json(docs);
     }).sort({dateCreated:-1});
 });
-
-// Review Schema and Model ----------------------------------
-var ReviewSchema = new mongoose.Schema({
-    content: String,
-    username: String,
-    rideName: String,
-    rideId: String,
-    dateCreated: Date
-});
-
-var Review = mongoose.model('Review', ReviewSchema);
 
 // get all reviews
 app.get('/reviews', function (req, res) {
@@ -333,7 +338,7 @@ app.get('/reviews', function (req, res) {
     });
 });
 
-// get all reviews by recipeId (for details pages)
+// get reviews for ride by id
 app.get('/reviewsByRide/:rideId', function (req, res) {
     var rideId = req.params.rideId;
     Review.find({rideId: rideId}, function(err, docs) {
@@ -341,8 +346,7 @@ app.get('/reviewsByRide/:rideId', function (req, res) {
     }).sort({dateCreated: -1});
 });
 
-
-// get all reviews by username (for profile pages)
+// get reviews for user by username
 app.get('/reviewsByUser/:username', function (req, res) {
     var username = req.params.username;
     Review.find({username: username}, function (err,docs) {
@@ -350,7 +354,7 @@ app.get('/reviewsByUser/:username', function (req, res) {
     }).sort({dateCreated: -1});
 });
 
-// save a review from the details page
+// create new review for given user and ride
 app.post('/review', function(req, res){
     var review = req.body;
     review.dateCreated = new Date();
