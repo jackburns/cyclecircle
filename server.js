@@ -30,7 +30,7 @@ app.use(passport.session());
 
 app.use(express.static(__dirname + '/public'));
 
-mongoose.connect('mongodb://localhost/cyclecircle');
+mongoose.connect(process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || 'mongodb://localhost/cyclecircle');
 
 var UserSchema = new mongoose.Schema({
     username: String,
@@ -369,7 +369,4 @@ app.post('/review', function(req, res){
     });
 });
 
-var ip = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
-var port = process.env.OPENSHIFT_NODEJS_PORT || 3000;
-
-app.listen(port, ip);
+app.set('port', (process.env.PORT || 5000));
