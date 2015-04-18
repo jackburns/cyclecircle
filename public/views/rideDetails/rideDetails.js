@@ -9,6 +9,7 @@ app.controller('RideDetailsController', function ($scope, $http, $location, $rou
 
 	$scope.saved = false; 
 
+	// check if ride has already been saved
 	if($scope.$parent.user) {
 		var savedRides = $scope.$parent.user.savedRides;
 
@@ -75,16 +76,20 @@ app.controller('RideDetailsController', function ($scope, $http, $location, $rou
 
         var waypoints = [];
 
+        // loads in waypoints from map data
         for(var i = 0; i < rideMap.waypoints.length; i++) {
         	waypoints[i] = {'location': new google.maps.LatLng(rideMap.waypoints[i][0], rideMap.waypoints[i][1]), 'stopover':false }
         }
 
+
+        // recreates map route
 	    directionsService.route({
 	    	'origin': new google.maps.LatLng(rideMap.start.lat, rideMap.start.lng),
 		    'destination': new google.maps.LatLng(rideMap.end.lat, rideMap.end.lng),
 		    'waypoints': waypoints,
 		    'travelMode': google.maps.DirectionsTravelMode.BICYCLING}, 
 
+		    // recalculates total distance
 		    function(res,sts) {
 		        if(sts=='OK'){
 		        	directionsDisplay.setDirections(res);

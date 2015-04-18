@@ -8,6 +8,7 @@ app.controller('SearchController', function ($scope, $http, $location) {
 		{label: '50km', value: 50}
 	]
 
+	// google autocomplete from Places library
     var search = document.getElementById('search-input');
 	var autocomplete = new google.maps.places.Autocomplete(search);
 
@@ -19,7 +20,7 @@ app.controller('SearchController', function ($scope, $http, $location) {
 
     $scope.search = function () {
         var place = autocomplete.getPlace();
-        
+
         if(!place) {
         	$scope.searchError = 'Please enter a location';
         	return;

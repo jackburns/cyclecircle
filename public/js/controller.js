@@ -2,6 +2,7 @@ var app = angular.module('CycleCircleApp', ['ngRoute']);
 
 app.controller('CycleCircleController', function($scope, $http, $location) {
 	$scope.user = null;
+	
 	$http.get('/loggedin').success(function (user) {
 		$scope.user = user;
 	});

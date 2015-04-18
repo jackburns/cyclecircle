@@ -19,6 +19,7 @@ app.controller('LoginController', function($scope, $http, $location) {
 		});
 	}
 
+	// listener for retype password field
 	$scope.retypePassword = "";
 	$scope.$watch('retypePassword', function(newVal, oldVal) {
 		if ($scope.newUser && $scope.newUser.password && newVal !== $scope.newUser.password) {

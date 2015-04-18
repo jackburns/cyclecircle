@@ -5,6 +5,7 @@ app.controller('CreateController', function ($scope, $http, $location) {
 
     $scope.submitRoute = function () {
 
+    	// validation to make sure all fields are filled
     	if(!origin) {
     		$scope.mapError = 'Please add origin';
     		return;
@@ -24,6 +25,7 @@ app.controller('CreateController', function ($scope, $http, $location) {
     		return;
     	}
 
+    	// saving map route information into ride
         var waypoints = [], data = {},
             routeLeg = directionsDisplay.directions.routes[0].legs[0];
 
@@ -48,9 +50,7 @@ app.controller('CreateController', function ($scope, $http, $location) {
         
         $http.post('/ride', ride).success(function(response) {
 			$location.path('/');
-			console.log('success');
         }).error(function(err){
-        	console.log('error' + err);
         	$scope.mapError = err;
         });
     }
@@ -75,7 +75,6 @@ app.controller('CreateController', function ($scope, $http, $location) {
             document.getElementById('map-canvas'),
             mapOptions);
 
-
         var start = document.getElementById('map-start');
         var end = document.getElementById('map-end');
         var startAutocomplete = new google.maps.places.Autocomplete(start);
@@ -83,7 +82,7 @@ app.controller('CreateController', function ($scope, $http, $location) {
         startAutocomplete.bindTo('bounds', map);
         endAutocomplete.bindTo('bounds', map);
 
-
+        // tries to locate user from ISP geolocation and zoom in on map
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function (position) {
                 var geolocate = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
@@ -95,10 +94,12 @@ app.controller('CreateController', function ($scope, $http, $location) {
         bikeLayer.setMap(map);
         directionsDisplay.setMap(map);
 
+        // listener for drag route event
         google.maps.event.addListener(directionsDisplay, 'directions_changed', function () {
             computeTotalDistance(directionsDisplay.getDirections());
         });
 
+        // listener for start location field
         google.maps.event.addListener(startAutocomplete, 'place_changed', function () {
             var place = startAutocomplete.getPlace();
             console.log(place);
@@ -108,6 +109,7 @@ app.controller('CreateController', function ($scope, $http, $location) {
             calcRoute();
         });
 
+        // listener for end location field
         google.maps.event.addListener(endAutocomplete, 'place_changed', function () {
             var place = endAutocomplete.getPlace();
 
@@ -117,7 +119,7 @@ app.controller('CreateController', function ($scope, $http, $location) {
         });
     }
 
-
+    // generates route from given places
     function calcRoute() {
         if (origin && destination) {
 
@@ -137,6 +139,7 @@ app.controller('CreateController', function ($scope, $http, $location) {
         }
     };
 
+    // calculates total distance of route
     function computeTotalDistance(result) {
         var total = 0;
         var myroute = result.routes[0];

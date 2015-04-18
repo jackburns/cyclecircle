@@ -12,6 +12,7 @@ app.controller('ProfileController', function ($scope, $http, $location, $routePa
 	$http.get('/user/' + username).success(function(user){
 		$scope.profile = user;
 		
+		// get favorited rides for user from ids
 		for(var i = 0; i < user.savedRides.length; i++) {
 			$http.get('/rides/' + user.savedRides[i]).success(function (ride) {
 				$scope.savedRides.push(ride);
