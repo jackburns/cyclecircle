@@ -1,0 +1,106 @@
+.navbar-brand {
+	font-size: 22px !important;
+}
+
+
+.form-control {
+	margin-bottom: 10px;
+}
+
+.error {
+	color: red;
+}
+
+#map-canvas {
+   height: 1000px;
+}
+
+.wrapper {
+	width: 70%;
+	vertical-align: middle;
+    margin-left: auto;
+    margin-right: auto;
+	background-color: #e1e1e1;
+	border-radius: 20px;
+	padding: 20px 20px 10px 20px;
+	margin-bottom: 15px;
+
+}
+.follow, .save {
+	display: inline-block;
+	float:right;
+}
+
+h2 {
+	margin-bottom: 20px !important;
+	font-size: 28px !important;
+	font-weight: 400 !important;
+	margin-top: 0px !important;
+	display:inline-block;
+}
+
+.details-header {
+	display:inline-block;
+}
+
+h1 {
+	margin-top: 0px !important;
+	font-weight: 500 !important;
+	margin-bottom: 20px !important;
+	display:inline-block;
+}
+
+h3 {
+	margin-top: 20px !important;
+	font-weight: 400 !important;
+	margin-bottom: 20px !important;
+	font-size: 20px !important;
+}
+
+.ride-container {
+	width:100%;
+	padding: 5px 15px;
+	display: block;
+	background-color: #fff;
+	border-radius: 4px;
+	margin-bottom: 15px;
+}
+
+.ride-name {
+	font-size: 20px;
+	margin-bottom: 0px;
+}
+
+.details-label {
+	font-size:16px;
+	margin-top: 10px;
+
+}
+
+.ride-label {
+	font-size: 16px;
+	margin-bottom: 10px;
+}
+
+.ride-description {
+	font-size: 16px;
+	margin-bottom: 5px;
+
+}
+.select {
+	display: inline-block !important;
+	width: 75px !important;
+	margin-left: 20px;
+}
+
+.search {
+	margin-bottom: 10px;
+}
+
+.reviews-sign {
+	float: right;
+	display: inline-block;
+	margin-left: 15px;
+	margin-bottom: 10px;
+	text-align: center;
+}

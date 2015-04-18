@@ -1,0 +1,35 @@
+<div class="wrapper">
+	<h2>{{profile.username}}'s Profile</h2>
+
+	<button ng-click="follow()" ng-show="!activeUser && !following" class="follow btn btn-primary">Follow User</button>
+	<button ng-click="unfollow()" ng-show="!activeUser && following" class="follow btn btn-primary">Unfollow User</button>
+
+		<h3>Created Rides</h3>
+		<div ng-repeat="ride in rides" >
+			<div class="ride-container">
+				<a href="#/ride/{{ride.rideId}}"><p class="ride-name">{{ride.name}}</p></a>
+				<p class="ride-label">Created on {{ride.dateCreated | date:'MM-dd-yyyy'}}</p>
+				<p class="ride-description">{{ride.description}}</p>
+			</div>
+		</div>
+	<h3>Favorite Rides</h3>
+	<div ng-repeat="savedRide in savedRides">
+		<div class="ride-container">
+			<a href="#/ride/{{savedRide.rideId}}"><p class="ride-name">{{savedRide.name}}</p></a>
+		</div>
+	</div>
+	<h3>Following</h3>
+	<div ng-repeat="follow in profile.following">
+		<div class="ride-container">
+		<a href="#/profile/{{follow}}"><p class="ride-name">{{follow}}</p></a>
+		</div>
+	</div>
+	<h3>Reviews</h3>
+	<div ng-repeat="review in reviews">
+		<div class="ride-container">
+			<a href="#/ride/{{review.rideId}}"><p class="ride-name">{{review.rideName}}</p></a>
+			<p class="ride-label">Reviewed on {{review.dateCreated | date:'MM-dd-yyyy'}}</p>
+			<p class="ride-description">{{review.content}}</p>
+		</div>
+	</div>	
+</div>

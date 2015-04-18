@@ -1,0 +1,20 @@
+<div class="wrapper">
+
+	<h2>Search Rides By Location</h2>
+
+	<p class="error">{{searchError}}</p>
+
+    <input placeholder="Enter Location" class="search form-control" id="search-input" type="text"/>
+    <span>Filter by Distance: </span><select ng-model="searchDistance" ng-change="search()" ng-options="item.value as item.label for item in distanceArray" class="select form-control" id="distance-input" type="text"/>
+
+	<h2 ng-show="rides">Search Results</h2>
+
+
+	<div ng-repeat="ride in rides">
+		<div class="ride-container">
+			<a href="#/ride/{{ride.rideId}}"><p class="ride-name">{{ride.name}}</p></a>
+			<p class="ride-label"><a href="#/profile/{{ride.creator}}">{{ride.creator}}</a> on {{ride.dateCreated | date:'MM-dd-yyyy'}}</p>
+			<p class="ride-description">{{ride.description}}</p>
+		</div>
+	</div>
+</div>

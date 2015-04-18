@@ -1,0 +1,12 @@
+
+<div class="wrapper">
+<h2 ng-show="!customFeed">Recent Rides</h2>
+<h2 ng-show="customFeed">Rides From People You Follow</h2>
+	<div ng-repeat="ride in rides">
+		<div class="ride-container">
+			<a href="#/ride/{{ride.rideId}}"><p class="ride-name">{{ride.name}}</p></a>
+			<p class="ride-label"><a href="#/profile/{{ride.creator}}">{{ride.creator}}</a> on {{ride.dateCreated | date:'MM-dd-yyyy'}}</p>
+			<p class="ride-description">{{ride.description}}</p>
+		</div>
+	</div>
+</div>

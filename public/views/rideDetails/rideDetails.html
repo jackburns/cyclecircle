@@ -1,0 +1,45 @@
+
+
+<div class="wrapper">
+  
+  <h2 class="details-header">{{ride.name}}</h2>
+  <button ng-show="!saved" ng-click="saveRide()" class="save btn btn-primary">Favorite Ride ({{ride.saved}})</button>
+  <button ng-show="saved" ng-click="removeRide()" class="save btn btn-primary">UnFavorite Ride ({{ride.saved}})</button>
+  <div class="ride-container">
+
+    <p class="details-label"><a href="#/profile/{{ride.creator}}">{{ride.creator}}</a> on {{ride.dateCreated | date:'MM-dd-yyyy'}}</p>
+
+    <p class="ride-description" >Ride Description: {{ride.description}}</p>
+    <p id="map-start" >Start: {{ride.start}}</p>
+    <p id="map-end" >End: {{ride.end}}</p>
+
+    <p>Total Distance: <span id="total"></span></p>
+    <p class="error">{{mapError}}</p>
+
+  </div>
+
+</div>
+<div class="wrapper" id="map-canvas"></div>
+<div class="wrapper">
+
+  <h2>Reviews</h2>
+  <a class="reviews-sign btn btn-primary" ng-show="!user" href="#/login"> Sign in to write a review </a>
+  <span class="error-message">{{errorMessage}}</span>
+  <span class="success-message">{{successMessage}}</span>
+  <div id="review-form" ng-show="user">
+      <form class="review-form" role="form" ng-model="review.username">
+          <div class="form-group">
+              <input ng-model="review.content" type="textarea" class="form-control" id="review" placeholder="Write a review here..." />
+          </div>
+          <div class="form-group">
+              <button ng-click="submitReview(review)"type="submit" class="btn btn-primary">Submit</button>
+         </div>
+      </form>
+  </div>
+  <div class="ride-container">
+    <div class="review" ng-repeat="review in reviews">
+        <h4><a href="#/profile/{{review.username}}">{{review.username}}</a> on {{review.dateCreated | date:'MM-dd-yyyy'}}</h4>
+        <p>{{review.content}}</p>
+    </div>
+  </div>
+</div>

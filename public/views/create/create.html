@@ -1,0 +1,23 @@
+<div class="wrapper">
+  <h2>Create Ride</h2>
+    <button class="follow btn btn-primary" ng-click="submitRoute()">Submit</button>
+
+  <p class="error">{{mapError}}</p>
+
+  <input placeholder="Ride Name" type="text" ng-model="nameText" class="form-control"/>
+  <textarea placeholder="Ride Description" ng-model="descriptionText" type="text" class="form-control"/></textarea>
+
+  <input placeholder="Start Location" type="text" id="map-start" class="form-control"/>
+  <input placeholder="End Location" type="text" id="map-end" class="form-control"/>
+  <p><b>Total Distance: </b><span id="total"></span></p>
+
+</div>
+
+<div class="wrapper">
+  <p class="tip"><b>Tip:</b> Enter start and end locations and then drag the route to go exactly where you want!</p>
+</div>
+
+<div class="wrapper" id="map-canvas"></div>
+
+
+
